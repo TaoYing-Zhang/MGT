@@ -1,5 +1,5 @@
 
-# MGT
+# MGT: Modality-Guided Transformer for Infrared and Visible Image Fusion
 ### To Train
 Download the training dataset from [**MSRS dataset**](https://github.com/Linfeng-Tang/MSRS), and put it in **./Dataset/trainsets/MSRS/**. 
 
@@ -12,10 +12,10 @@ Download the test dataset from [**MSRS dataset**](https://github.com/Linfeng-Tan
 
 ## Recommended Environment
 
- - [x] torch 1.11.0
+ - [x] Pytorch 1.13.0
  - [x] torchvision 0.12.0
  - [x] tensorboard  2.7.0
- - [x] numpy 1.21.2
+ - [x] numpy  1.21.6
 
 # MGT
 # MGT
