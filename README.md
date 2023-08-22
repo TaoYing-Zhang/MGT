@@ -16,7 +16,3 @@ Download the test dataset from [**MSRS dataset**](https://github.com/Linfeng-Tan
  - [x] torchvision 0.12.0
  - [x] tensorboard  2.7.0
  - [x] numpy  1.21.6
-
-# MGT
-# MGT
-# MGT
