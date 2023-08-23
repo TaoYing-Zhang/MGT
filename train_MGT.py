@@ -21,7 +21,7 @@ def main():
     model_path = './Model/' + f'{method_type}/{method_type}_epoch_46.pth'
     optimizer_path = './Model/' + f'{method_type}/optimizer_epoch_46.pth'
     # Dataset
-    Vis_RGB = False  # 可见光图像是否为RGB图像
+    Vis_RGB = False
     trainset_type = "MSRS"  # MSRS/TNO
     if trainset_type == 'MSRS':
         Vis_RGB = True
@@ -59,12 +59,12 @@ def main():
             break
         if e > 80:
             lr_new = lr / 100
-            # 修改学习率
+            # modify learning rate
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr_new
         elif e > 50:
             lr_new = lr / 10
-            # 修改学习率
+            # modify learning rate
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr_new
         loss1_total = 0.
@@ -90,7 +90,7 @@ def main():
             loss3_total += loss_ssim
             loss_total += total_loss
 
-        # 每轮保存一次模型
+        # Save the model once per epoch
         torch.save(model.state_dict(), f'{model_save_path}/{method_type}_epoch_{e + 1}.pth')
         torch.save(optimizer.state_dict(), f'{model_save_path}/optimizer_epoch_{e + 1}.pth')
         loss1_total /= count
