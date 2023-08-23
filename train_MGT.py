@@ -15,7 +15,7 @@ EPSILON = 1e-5
 def main():
     # GPU/CPU
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # 模型方法及模型路径
+    # method type and path
     method_type = 'MGT'
     model_load = False
     model_path = './Model/' + f'{method_type}/{method_type}_epoch_46.pth'
@@ -26,31 +26,31 @@ def main():
     if trainset_type == 'MSRS':
         Vis_RGB = True
     batch_size = 4
-    # 模型保存路径
+    # model save path
     model_save_path = os.path.join('./Model/', method_type)
     if os.path.exists(model_save_path) is not True:
         os.makedirs(model_save_path)
 
-    # 加载/初始化模型
+    # load model
     model = MGT(Ex_depths=3, Fusion_depths=3, Re_depths=3)
     model.to(device)
     if model_load:
         model.load_state_dict(torch.load(model_path))
 
-    # 加载训练数据集
+    # load dataset
     train_path = os.path.join('./Dataset/trainsets/', trainset_type)
     print('Loading train dataset from {}.'.format(train_path))
     trainset = TrainDataset(train_path, Vis_RGB, True, patch_size=128)
     trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=0)
 
-    # 优化器和损失函数
+    # optimizer
     lr = 2e-4
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=0)
     if model_load:
         optimizer.load_state_dict(torch.load(optimizer_path))
     fusion_loss = Swin_loss()
 
-    # 开始训练
+    # training
     print('Staring Training {} on {}'.format(method_type, device))
     epoch = 100
     for e in range(epoch):

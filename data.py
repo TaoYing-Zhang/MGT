@@ -15,21 +15,21 @@ class TestDataset(data.Dataset):
     def __init__(self, data_dir, Vis_RGB=False, transform=to_tensor):
         super().__init__()
         self.RGB = Vis_RGB
-        dirname = os.listdir(data_dir)  # 获得TNO数据集的子目录
+        dirname = os.listdir(data_dir)  # subdirectory of the dataset
         for sub_dir in dirname:
             temp_path = os.path.join(data_dir, sub_dir)
             if sub_dir == 'Inf':
-                self.inf_path = temp_path  # 获得红外路径
+                self.inf_path = temp_path  # inf path
             else:
-                self.vis_path = temp_path  # 获得可见光路径
+                self.vis_path = temp_path  # vis path
 
-        self.name_list = os.listdir(self.inf_path)  # 获得子目录下的图片的名称
+        self.name_list = os.listdir(self.inf_path)  # the name of the images in the subdirectory
         self.transform = transform
 
     def __getitem__(self, index):
-        name = self.name_list[index]  # 获得当前图片的名称
+        name = self.name_list[index]  # the name of the current image
 
-        inf_image = cv2.imread(os.path.join(self.inf_path, name), 0)  # 获取红外图像
+        inf_image = cv2.imread(os.path.join(self.inf_path, name), 0)  # infrared images
         # inf_image = cv2.resize(inf_image, (689, 509))
         inf_image = self.transform(inf_image)
         if self.RGB:
@@ -52,23 +52,23 @@ class TrainDataset(data.Dataset):
     def __init__(self, data_dir, Vis_RGB=False, crop_flag=False, patch_size=256, transform=to_tensor):
         super().__init__()
         self.RGB = Vis_RGB
-        dirname = os.listdir(data_dir)  # 获得数据集的子目录
+        dirname = os.listdir(data_dir)  # subdirectory of the dataset
         for sub_dir in dirname:
             temp_path = os.path.join(data_dir, sub_dir)
             if sub_dir == 'Inf':
-                self.inf_path = temp_path  # 获得红外路径
+                self.inf_path = temp_path  # inf path
             else:
-                self.vis_path = temp_path  # 获得可见光路径
+                self.vis_path = temp_path  # vis path
 
-        self.name_list = os.listdir(self.inf_path)  # 获得子目录下的图片的名称
+        self.name_list = os.listdir(self.inf_path)  # the name of the images in the subdirectory
         self.transform = transform
         self.crop_flag = crop_flag
         self.patch_size = patch_size
 
     def __getitem__(self, index):
-        name = self.name_list[index]  # 获得当前图片的名称
+        name = self.name_list[index]  # the name of the current image
 
-        inf_image = cv2.imread(os.path.join(self.inf_path, name), 0)  # 获取红外图像
+        inf_image = cv2.imread(os.path.join(self.inf_path, name), 0)  # infrared images
         # inf_image = cv2.resize(inf_image, (170, 170))
         inf_image = self.transform(inf_image)
         if self.RGB:
@@ -87,48 +87,6 @@ class TrainDataset(data.Dataset):
             inf_image = inf_image[:, rnd_h:rnd_h + self.patch_size, rnd_w:rnd_w + self.patch_size]
 
         return vis_image, inf_image, name
-
-    def __len__(self):
-        return len(self.name_list)
-
-
-class TrainDatasetDiv(data.Dataset):
-    def __init__(self, data_dir, Vis_RGB=False, crop_flag=False, patch_size=256, transform=to_tensor):
-        super().__init__()
-        self.RGB = Vis_RGB
-        dirname = os.listdir(data_dir)  # 获得数据集的子目录
-        for sub_dir in dirname:
-            temp_path = os.path.join(data_dir, sub_dir)
-            if sub_dir == 'Inf':
-                self.inf_path = temp_path  # 获得红外路径
-            else:
-                self.vis_path = temp_path  # 获得可见光路径
-
-        self.name_list = os.listdir(self.inf_path)  # 获得子目录下的图片的名称
-        self.transform = transform
-        self.crop_flag = crop_flag
-        self.patch_size = patch_size
-
-    def __getitem__(self, index):
-        name = self.name_list[index]  # 获得当前图片的名称
-
-        inf_image = cv2.imread(os.path.join(self.inf_path, name), 0)  # 获取红外图像
-        # inf_image = cv2.resize(inf_image, (170, 170))
-        inf_image = self.transform(inf_image)
-        vis_image = cv2.imread(os.path.join(self.vis_path, name))
-        vis_image = self.transform(vis_image)
-        # vis_image = cv2.resize(vis_image, (170, 170))
-        vis_y_image, vis_cb_image, vis_cr_image = RGB2YCrCb(vis_image)
-        if self.crop_flag:
-            _, H, W = vis_image.shape
-            rnd_h = random.randint(0, max(0, H - self.patch_size))
-            rnd_w = random.randint(0, max(0, W - self.patch_size))
-            vis_y_image = vis_y_image[:, rnd_h:rnd_h + self.patch_size, rnd_w:rnd_w + self.patch_size]
-            vis_cb_image = vis_cb_image[:, rnd_h:rnd_h + self.patch_size, rnd_w:rnd_w + self.patch_size]
-            vis_cr_image = vis_cr_image[:, rnd_h:rnd_h + self.patch_size, rnd_w:rnd_w + self.patch_size]
-            inf_image = inf_image[:, rnd_h:rnd_h + self.patch_size, rnd_w:rnd_w + self.patch_size]
-
-        return vis_y_image, vis_cb_image, vis_cr_image, inf_image, name  # , y
 
     def __len__(self):
         return len(self.name_list)

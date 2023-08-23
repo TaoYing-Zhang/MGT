@@ -15,33 +15,33 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 def main():
     # GPU/CPU
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    # 模型路径
+    # model path
     model_path = './Model/MGT/MGT_epoch_100.pth'
     # Dataset
-    Vis_RGB = False  # 可见光图像是否为RGB图像
+    Vis_RGB = False
     testset_type = "MSRS"  # MSRS/TNO
     if testset_type == 'MSRS':
         Vis_RGB = True
 
-    # 加载/初始化模型
+    # load model
     model = MGT(Ex_depths=3, Fusion_depths=3, Re_depths=3)
     model.to(device)
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
-    # 加载数据集
+    # load dataset
     test_path = os.path.join('./Dataset/test/', testset_type)
     print('Loading test dataset from {}.'.format(test_path))
     testset = TestDataset(test_path, Vis_RGB)
     testloader = DataLoader(testset, batch_size=1, shuffle=False, num_workers=0)
     test_tqdm = tqdm(testloader, total=len(testloader))
 
-    # 创建融合结果保存路径
+    # create result directory
     fused_image_save_path = os.path.join('./result/', testset_type)
     if os.path.exists(fused_image_save_path) is not True:
         os.makedirs(fused_image_save_path)
 
-    # 开始测试
+    # testing
     print('Staring testing on {}'.format(device))
     if Vis_RGB:
         for vis_y_image, vis_cb_image, vis_cr_image, inf_image, name in test_tqdm:

@@ -173,7 +173,6 @@ class GMSA(nn.Module):
             return y, prev_atns
 
 
-# y对x做做交叉注意力
 class CGMSA(nn.Module):
     def __init__(self, channels, shifts=4, window_sizes=None, calc_attn=True):
         super(CGMSA, self).__init__()
@@ -443,7 +442,6 @@ class MGT(nn.Module):
 
         #####################################################################################################
         ################################### 1, shallow feature extraction ###################################
-        # 修改shallow feature extraction 网络, 修改为2个3x3的卷积####
         self.conv_first1_A = nn.Conv2d(in_chans, embed_dim_temp, 3, 1, 1)
         self.conv_first2_A = nn.Conv2d(embed_dim_temp, embed_dim, 3, 1, 1)
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
@@ -470,11 +468,11 @@ class MGT(nn.Module):
 
         #####################################################################################################
         ###################################### 3, deep feature fusion #######################################
-        # 经过两层卷积将两张特征图合成一张特征图
+        # obtain fused features
         self.conv_before_cross_attention1 = nn.Conv2d(2 * embed_dim, 2 * embed_dim, 3, 1, 1)
         self.conv_before_cross_attention2 = nn.Conv2d(2 * embed_dim, embed_dim, 3, 1, 1)
 
-        # 分别用提取的红外和可见光特征图与融合和特征图做交叉注意力操作
+        # calculate cross attention
         self.layers_Fusion = nn.ModuleList()
         for i_layer in range(self.Fusion_num_layers):
             layer = CELAB(inp_channels=embed_dim, out_channels=embed_dim, shifts=i_layer % 2, window_sizes=self.window_sizes)
@@ -630,7 +628,7 @@ if __name__ == '__main__':
     # print(y)
     tensor = (x, x)
     import thop
-    flops, params = thop.profile(model, inputs=tensor)  # input 输入的样本
+    flops, params = thop.profile(model, inputs=tensor)  # input
     print(flops / 1e9)
     print(params)
     par = 0
